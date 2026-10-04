@@ -1,0 +1,47 @@
+# Compiled binaries / executables
+01_spatial_locality/row_vs_col
+01_spatial_locality/stride_benchmark
+01_spatial_locality/test_ex*
+02_pointer_chasing/list_vs_array
+02_pointer_chasing/test_ex*
+03_struct_packing/struct_packing
+03_struct_packing/test_ex*
+04_aos_vs_soa/aos_vs_soa
+04_aos_vs_soa/test_ex*
+05_hot_cold_splitting/hot_cold
+05_hot_cold_splitting/test_ex*
+06_indices_vs_pointers/ast_tree
+06_indices_vs_pointers/test_ex*
+solutions/test_sol*
+
+# Object files & libraries
+*.o
+*.obj
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# Debug symbols & profiling
+*.dSYM/
+*.gmon
+gmon.out
+perf.data*
+
+# macOS & OS artifacts
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Editor & IDE artifacts
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.clangd/
+compile_commands.json
