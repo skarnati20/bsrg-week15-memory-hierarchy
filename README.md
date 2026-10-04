@@ -4,25 +4,42 @@ An interactive, hands-on suite of exercises and benchmarks demonstrating the imp
 
 ---
 
-## 🚀 Quick Start
+## Ὠ0 Quick Start
 
+### 1. Test Single Problems / Exercises
 ```bash
-# 1. Run all standalone demonstrations & benchmarks:
-make bench
+make test1      # Test Exercise 01 (Spatial Locality)
+make test2      # Test Exercise 02 (Pointer Chasing)
+make test3      # Test Exercise 03 (Struct Packing)
+make test4      # Test Exercise 04 (AoS vs SoA)
+make test5      # Test Exercise 05 (Hot/Cold Splitting)
+make test6      # Test Exercise 06 (Flattened AST)
 
-# 2. Run the automated test harness against your exercise files:
-make exercises
+make exercises  # Test all exercises in sequence
+```
 
-# 3. Test an individual exercise (e.g. Exercise 1):
-make test1
+### 2. Compare Your Solution Directly Against Reference (3-Way Benchmark)
+```bash
+make compare1   # 3-Way benchmark for Exercise 1 (Baseline vs Yours vs Reference)
+make compare2   # 3-Way benchmark for Exercise 2
+make compare3   # 3-Way benchmark for Exercise 3
+make compare4   # 3-Way benchmark for Exercise 4
+make compare5   # 3-Way benchmark for Exercise 5
+make compare6   # 3-Way benchmark for Exercise 6
 
-# 4. Run the test harness against the reference solutions:
-make solutions
+make compare    # Run all 3-way comparisons
+```
+
+### 3. Demonstrations & Reference Solutions
+```bash
+make bench      # Run standalone demonstrations of memory and cache effects
+make demo1..6   # Run individual demonstration for a topic (e.g. make demo1)
+make solutions  # Verify all official reference solutions
 ```
 
 ---
 
-## 🧠 Why Memory Layout Matters
+## ᾞ0 Why Memory Layout Matters
 
 Modern CPU cores run at **~3–5 GHz**, capable of executing multiple arithmetic instructions per nanosecond. However, accessing main memory (DRAM) takes **50–100 nanoseconds (~200–300 clock cycles)**. 
 
@@ -47,16 +64,16 @@ Address: [ 0x00 ........................................ 0x3F ]
 
 ---
 
-## 🎯 The Exercises
+## ἺF The Exercises
 
-All exercise implementation details and benchmarking boilerplate are hidden inside automated test harnesses. As the implementer, you only need to edit the clean `exercise.h` / `exercise.c` file in each directory.
+All exercise test harnesses and benchmarking boilerplate are decoupled and hidden. You only edit the clean `exercise.h` / `exercise.c` file in each folder.
 
 ### Exercise 01: Spatial Locality (2D Filter)
 - **Directory:** `01_spatial_locality/`
 - **Concept:** Row-Major vs. Column-Major 2D Matrix traversal.
 - **Problem:** A naive image blur filter loops column-by-column, jumping 16KB per step and thrashing cache lines.
 - **Task:** Rewrite the 3x3 box blur filter to traverse memory row-by-row (`y` outer, `x` inner).
-- **Run:** `make test1` (Target: **$\ge 4.0\times$ speedup**)
+- **Test:** `make test1` | **Compare:** `make compare1` (Target: **$\ge 4.0\times$ speedup**)
 
 ---
 
@@ -65,7 +82,7 @@ All exercise implementation details and benchmarking boilerplate are hidden insi
 - **Concept:** Linked list pointer hopping vs contiguous array ring buffers.
 - **Problem:** Dynamically-allocated linked lists scatter nodes across heap memory, stalling the CPU on DRAM latency and defeating hardware prefetchers.
 - **Task:** Implement an array-based contiguous Ring Buffer Queue (`push` and `pop`).
-- **Run:** `make test2` (Target: **$\ge 2.0\times$ speedup**)
+- **Test:** `make test2` | **Compare:** `make compare2` (Target: **$\ge 2.0\times$ speedup**)
 
 ---
 
@@ -73,8 +90,8 @@ All exercise implementation details and benchmarking boilerplate are hidden insi
 - **Directory:** `03_struct_packing/`
 - **Concept:** Eliminating invisible padding holes by ordering fields by alignment.
 - **Problem:** `UnoptimizedMonster` takes 48 bytes despite having only 26 bytes of data because poorly ordered fields create interior alignment holes.
-- **Task:** Reorder fields from largest alignment requirement (8-byte) down to smallest (1-byte) to pack the struct into $\le 32$ bytes.
-- **Run:** `make test3` (Target: **$\le 32$ bytes, $\ge 1.15\times$ speedup**)
+- **Task:** Reorder fields from largest alignment requirement (8-byte) down to smallest (1-byte) in `exercise.h` to pack the struct into $\le 32$ bytes.
+- **Test:** `make test3` | **Compare:** `make compare3` (Target: **$\le 32$ bytes, $\ge 1.15\times$ speedup**)
 
 ```
 Bad Ordering (48B):  [u8][7B pad][u64][u8][1B pad][u16][4B pad][f64][u8][3B pad][u32][u8][7B pad]
@@ -88,7 +105,7 @@ Good Ordering (32B): [u64][f64][u32][u16][u8][u8][u8][u8][6B tail pad]
 - **Concept:** Cache line utilization and SIMD auto-vectorization.
 - **Problem:** Updating `pos += vel * dt` on an array of 64-byte entity structs loads 40 bytes of unused strings/tags per particle into L1 cache (~60% bandwidth waste).
 - **Task:** Implement a Struct-of-Arrays (SoA) layout with parallel float buffers (`x, y, z, vx, vy, vz`).
-- **Run:** `make test4` (Target: **$\ge 2.5\times$ speedup**)
+- **Test:** `make test4` | **Compare:** `make compare4` (Target: **$\ge 2.5\times$ speedup**)
 
 ---
 
@@ -97,7 +114,7 @@ Good Ordering (32B): [u64][f64][u32][u16][u8][u8][u8][u8][6B tail pad]
 - **Concept:** Keeping per-tick simulation working sets small enough to fit inside L1/L2 caches.
 - **Problem:** A monolithic 216-byte game unit struct floods caches with dialogue strings and sound paths during frame ticks.
 - **Task:** Separate the 16-byte `HotUnit` state from cold metadata and implement the tick update loop.
-- **Run:** `make test5` (Target: **$\ge 5.0\times$ speedup**)
+- **Test:** `make test5` | **Compare:** `make compare5` (Target: **$\ge 5.0\times$ speedup**)
 
 ---
 
@@ -106,43 +123,50 @@ Good Ordering (32B): [u64][f64][u32][u16][u8][u8][u8][u8][6B tail pad]
 - **Concept:** Replacing 64-bit recursive pointer trees with compact flattened post-order arrays.
 - **Problem:** Traditional ASTs use two 64-bit pointers per node (16 bytes of pointers alone) and require recursive pointer-chasing traversal.
 - **Task:** Implement post-order tree serialization into a flat 8-byte `CompactNode` arena and a linear stack-based evaluator.
-- **Run:** `make test6` (Target: **$\ge 1.5\times$ speedup**)
+- **Test:** `make test6` | **Compare:** `make compare6` (Target: **$\ge 1.5\times$ speedup**)
 
 ---
 
-## 📁 Repository Structure
+## Ὄ1 Repository Structure
 
 ```
 .
-├── Makefile                          # Unified build & test driver
+├── Makefile                          # Unified build, test, and 3-way compare driver
+├── .gitignore                        # Git exclusion rules
 ├── common/
 │   ├── benchmark.h                   # Monotonic timer & aligned memory helpers
-│   └── harness.h                     # Test verification & reporting harness
+│   └── harness.h                     # Test verification & 3-way benchmark reporter
 ├── 01_spatial_locality/
-│   ├── exercise.h / exercise.c       # Exercise 01 (Clean student workspace)
-│   ├── runner.c                      # Hidden test & benchmark harness
+│   ├── exercise.h / exercise.c       # Clean student workspace (Row-major filter)
+│   ├── runner.c                      # Single-problem test harness
+│   ├── compare.c                     # 3-Way comparison harness (Baseline vs Yours vs Ref)
 │   ├── row_vs_col.c                  # Standalone benchmark
 │   └── stride_benchmark.c            # Cache-line striding demonstration
 ├── 02_pointer_chasing/
-│   ├── exercise.h / exercise.c       # Exercise 02 (Queue implementation)
-│   ├── runner.c                      # Hidden test & benchmark harness
+│   ├── exercise.h / exercise.c       # Clean student workspace (Queue implementation)
+│   ├── runner.c                      # Single-problem test harness
+│   ├── compare.c                     # 3-Way comparison harness
 │   └── list_vs_array.c               # Standalone benchmark
 ├── 03_struct_packing/
-│   ├── exercise.h / exercise.c       # Exercise 03 (Struct layout optimization)
-│   ├── runner.c                      # Hidden test & benchmark harness
+│   ├── exercise.h / exercise.c       # Clean student workspace (Struct layout optimization)
+│   ├── runner.c                      # Single-problem test harness
+│   ├── compare.c                     # 3-Way comparison harness
 │   └── struct_packing.c              # Standalone layout inspector
 ├── 04_aos_vs_soa/
-│   ├── exercise.h / exercise.c       # Exercise 04 (SoA physics)
-│   ├── runner.c                      # Hidden test & benchmark harness
+│   ├── exercise.h / exercise.c       # Clean student workspace (SoA physics)
+│   ├── runner.c                      # Single-problem test harness
+│   ├── compare.c                     # 3-Way comparison harness
 │   └── aos_vs_soa.c                  # Standalone AoS vs SoA benchmark
 ├── 05_hot_cold_splitting/
-│   ├── exercise.h / exercise.c       # Exercise 05 (Hot/Cold separation)
-│   ├── runner.c                      # Hidden test & benchmark harness
+│   ├── exercise.h / exercise.c       # Clean student workspace (Hot/Cold separation)
+│   ├── runner.c                      # Single-problem test harness
+│   ├── compare.c                     # 3-Way comparison harness
 │   └── hot_cold.c                    # Standalone benchmark
 ├── 06_indices_vs_pointers/
-│   ├── exercise.h / exercise.c       # Exercise 06 (Flattened AST)
-│   ├── runner.c                      # Hidden test & benchmark harness
+│   ├── exercise.h / exercise.c       # Clean student workspace (Flattened AST)
+│   ├── runner.c                      # Single-problem test harness
+│   ├── compare.c                     # 3-Way comparison harness
 │   └── ast_tree.c                    # Standalone benchmark
 └── solutions/
-    ├── 01_solution.c ... 06_solution.c  # Clean reference solutions
+    ├── 01_solution.c ... 06_solution.c  # Reference implementations
 ```

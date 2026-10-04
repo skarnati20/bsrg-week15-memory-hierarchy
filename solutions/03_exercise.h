@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef UNOPTIMIZED_MONSTER_DEFINED
+#define UNOPTIMIZED_MONSTER_DEFINED
 typedef struct {
     uint8_t   is_alive;        // 1 byte + 7 bytes padding
     uint64_t  monster_id;      // 8 bytes
@@ -14,6 +16,7 @@ typedef struct {
     uint32_t  experience;      // 4 bytes
     uint8_t   status_effects;  // 1 byte + 7 bytes tail padding
 } UnoptimizedMonster;
+#endif
 
 // SOLUTION: Packed struct layout (32 bytes total)
 // Ordered by natural alignment: 8-byte -> 4-byte -> 2-byte -> 1-byte
@@ -31,8 +34,13 @@ typedef struct {
     uint8_t   is_boss;         // 1 byte  (offset 24)
     uint8_t   status_effects;  // 1 byte  (offset 25)
     // 6 bytes tail padding to maintain 8-byte struct alignment
-} OptimizedMonster;
+} RefOptimizedMonster;
 
-void process_monsters(const OptimizedMonster *monsters, size_t count, double *out_total_health);
+#ifdef USE_SOLUTION_HEADER
+typedef RefOptimizedMonster OptimizedMonster;
+#define process_monsters ref_process_monsters
+#endif
+
+void ref_process_monsters(const RefOptimizedMonster *monsters, size_t count, double *out_total_health);
 
 #endif // SOLUTIONS_03_EXERCISE_H

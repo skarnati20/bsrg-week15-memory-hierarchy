@@ -2,16 +2,22 @@
 01_spatial_locality/row_vs_col
 01_spatial_locality/stride_benchmark
 01_spatial_locality/test_ex*
+01_spatial_locality/compare_ex*
 02_pointer_chasing/list_vs_array
 02_pointer_chasing/test_ex*
+02_pointer_chasing/compare_ex*
 03_struct_packing/struct_packing
 03_struct_packing/test_ex*
+03_struct_packing/compare_ex*
 04_aos_vs_soa/aos_vs_soa
 04_aos_vs_soa/test_ex*
+04_aos_vs_soa/compare_ex*
 05_hot_cold_splitting/hot_cold
 05_hot_cold_splitting/test_ex*
+05_hot_cold_splitting/compare_ex*
 06_indices_vs_pointers/ast_tree
 06_indices_vs_pointers/test_ex*
+06_indices_vs_pointers/compare_ex*
 solutions/test_sol*
 
 # Object files & libraries

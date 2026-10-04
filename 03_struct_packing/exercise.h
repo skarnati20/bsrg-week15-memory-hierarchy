@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#ifndef UNOPTIMIZED_MONSTER_DEFINED
+#define UNOPTIMIZED_MONSTER_DEFINED
 // Unoptimized monster struct (48 bytes due to alignment holes)
 typedef struct {
     uint8_t   is_alive;        // 1 byte + 7 bytes padding
@@ -15,6 +17,7 @@ typedef struct {
     uint32_t  experience;      // 4 bytes
     uint8_t   status_effects;  // 1 byte + 7 bytes tail padding
 } UnoptimizedMonster;
+#endif
 
 // EXERCISE: Reorder fields in OptimizedMonster to eliminate padding holes
 typedef struct {
